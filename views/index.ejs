@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%=title %>
+    </title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+    <% if (locals.user) {%>
+        <header>
+            <ul>
+                <div class="header__brand">
+                    <h1>Welcome to cloud storage!</h1>
+                </div>
+                <div class="header__account">
+                    <ul>
+                        <% if(locals.user) { %>
+                            <li><a href="/users/<%=user.user_name%>">Hello, <%=user.user_name%> (Membership:
+                                        <%=user.membership_status %>)</a></li>
+                            <li><a href="/log-out">Log out</a></li>
+                            <% } else {%>
+                                <li><a href="/log-in">Log in</a></li>
+                                <li><a href="/sign-up">Sign up</a></li>
+                                <% } %>
+                    </ul>
+                </div>
+
+            </ul>
+        </header>
+        <%} else{%>
+
+            <main class="container">
+                <div class="content__wrapper_col">
+                    <div class="content__title_login">
+                        <h1>Save your personal files here...</h1>
+                        <h3>Hundred thoundsand people use...</h3>
+                    </div>
+                    <div class="form__submit form__submit_login">
+                        <form action="/log-in" method="post">
+                            <label for="user_name">User name: </label>
+                            <input type="text" id="user_name" name="user_name" required>
+                            <label for="password">Password name: </label>
+                            <input type="password" id="password" name="password" required>
+                            <button type="submit">Login now</button>
+
+                        </form>
+                        <p>Or</p>
+
+                        <a href="/sign-up">Register now</a>
+                    </div>
+                </div>
+            </main>
+            <%}%>
+</body>
+
+</html>
