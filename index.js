@@ -17,6 +17,7 @@ const bcrypt = require("bcryptjs");
 
 const multer = require("multer");
 const upload = multer({ dest: "public/uploads/" });
+const fs = require("node:fs");
 
 const prisma = new PrismaClient();
 
@@ -97,8 +98,18 @@ app.use(passport.session());
 app.use(express.urlencoded({ extended: false }));
 app.use("/static", express.static(path.join(__dirname, "public")));
 
-app.get("/", (req, res) => {
-  res.render("index", { title: "Home page", user: req.user });
+app.get("/", async (req, res) => {
+  const folders = await prisma.folder.findMany({
+    select: {
+      id: true,
+      name: true,
+      created_at: true,
+    },
+    where: {
+      userId: req.user.id,
+    },
+  });
+  res.render("index", { title: "Home page", user: req.user, folders: folders });
 });
 
 app.get("/sign-up", (req, res) => {
@@ -199,6 +210,84 @@ app.get("/log-in", (req, res) => {
 
 app.post("/upload", upload.single("file"), (req, res) => {
   res.redirect("/");
+});
+
+app.post("/folders/create", async (req, res) => {
+  const folderName = req.body.folder_name;
+  const folderPath = path.join(__dirname, `public/uploads/${folderName}`);
+
+  try {
+    if (!fs.existsSync(folderPath)) {
+      fs.mkdirSync(folderPath);
+      await prisma.folder.create({
+        data: {
+          name: folderName,
+          userId: req.user.id,
+        },
+      });
+    }
+    res.redirect("/");
+  } catch (err) {
+    console.error(err);
+  }
+});
+
+app.post("/folders/delete", async (req, res) => {
+  const folderId = parseInt(req.body.folder_id);
+  const folderName = req.body.folder_name;
+  const folderPath = path.join(__dirname, `public/uploads/${folderName}`);
+
+  try {
+    if (fs.existsSync(folderPath)) {
+      fs.rmdir(folderPath, (err) => {
+        if (err) {
+          throw err;
+        }
+      });
+    }
+
+    await prisma.folder.delete({
+      where: {
+        id: folderId,
+      },
+    });
+
+    res.redirect("/");
+  } catch (err) {
+    console.error(err);
+  }
+});
+
+app.post("/folders/edit", async (req, res) => {
+  const folderId = parseInt(req.body.folder_id);
+  const folderOldName = req.body.folder_old_name;
+  const folderOldPath = path.join(__dirname, `public/uploads/${folderOldName}`);
+
+  const folderNewName = req.body.folder_new_name;
+  const folderNewPath = path.join(__dirname, `public/uploads/${folderNewName}`);
+
+  try {
+    if (fs.existsSync(folderOldPath)) {
+      fs.rename(folderOldPath, folderNewPath, (err) => {
+        if (err) {
+          throw err;
+        }
+      });
+    }
+
+    await prisma.folder.update({
+      where: {
+        id: folderId,
+      },
+      data: {
+        name: folderNewName,
+      },
+    });
+
+    res.redirect("/");
+  } catch (err) {
+    console.error(err);
+  }
 });
 
 app.listen(process.env.PORT, () => {

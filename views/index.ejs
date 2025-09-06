@@ -34,10 +34,55 @@
             </ul>
         </header>
         <main class="container">
-            <form action="/upload" method="post" enctype="multipart/form-data">
-                <input type="file" name="file" />
-                <button type="submit">Upload files</button>
-            </form>
+            <div class="main_actions">
+                <form action="/upload" method="post" enctype="multipart/form-data">
+                    <input type="file" name="file" />
+                    <button type="submit">Upload files</button>
+                </form>
+
+                <div>
+                    <dialog class="dialog__create_folder">
+                        <form action="/folders/create" method="post">
+                            <input type="text" name="folder_name" placeholder="Untitled folder">
+                            <button type="submit">Create folder</button>
+                        </form>
+                    </dialog>
+                    <button class="btn__new_folder">New folder</button>
+                </div>
+            </div>
+            <% if(locals.folders) {%>
+                <ul class="folders">
+                    <% locals.folders.forEach(folder=> { %>
+                        <li class="folder">
+                            <div class="folder__description">
+                                <%=folder.name %>
+                                    <%=folder.created_at %>
+                            </div>
+                            <div class="folder__actions">
+
+
+                                <form action="/folders/delete" method="post">
+                                    <input type="hidden" name="folder_id" value="<%=folder.id%>">
+                                    <input type="hidden" name="folder_name" value="<%=folder.name%>">
+                                    <button type="submit">Delete</button>
+                                </form>
+                                <dialog class="dialog__edit_folder">
+
+                                    <form action="/folders/edit" method="post">
+                                        <input type="hidden" name="folder_id" value="<%=folder.id%>">
+                                        <input type="hidden" name="folder_old_name" value="<%=folder.name%>">
+                                        <input type="text" name="folder_new_name" placeholder="<%=folder.name%>">
+                                        <button type="submit">Save folder</button>
+                                    </form>
+
+                                </dialog>
+                                <button class="btn__edit_folder">Edit</button>
+                            </div>
+                        </li>
+                        <% }); %>
+                </ul>
+                <% } %>
+
         </main>
         <%} else{%>
 
@@ -63,6 +108,7 @@
                 </div>
             </main>
             <%}%>
+                <script src="/static/index.js"></script>
 </body>
 
 </html>
