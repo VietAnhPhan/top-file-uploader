@@ -15,6 +15,9 @@ const { body, validationResult } = require("express-validator");
 const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcryptjs");
 
+const multer = require("multer");
+const upload = multer({ dest: "public/uploads/" });
+
 const prisma = new PrismaClient();
 
 const app = express();
@@ -192,6 +195,10 @@ app.get("/log-in", (req, res) => {
   res.render("index", {
     title: "Login here",
   });
+});
+
+app.post("/upload", upload.single("file"), (req, res) => {
+  res.redirect("/");
 });
 
 app.listen(process.env.PORT, () => {

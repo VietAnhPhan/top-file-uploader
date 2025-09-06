@@ -33,6 +33,12 @@
 
             </ul>
         </header>
+        <main class="container">
+            <form action="/upload" method="post" enctype="multipart/form-data">
+                <input type="file" name="file" />
+                <button type="submit">Upload files</button>
+            </form>
+        </main>
         <%} else{%>
 
             <main class="container">
