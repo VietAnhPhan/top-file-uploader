@@ -127,7 +127,7 @@
                                         </div>
                                         <div class="file__actions">
 
-
+                                            <a href="/file/<%=file.name%>" class="btn__view_details">View details</a>
                                             <form action="/files/delete" method="post">
                                                 <input type="hidden" name="file_id" value="<%=file.id%>">
                                                 <input type="hidden" name="file_name" value="<%=file.name%>">

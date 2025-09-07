@@ -330,6 +330,22 @@ app.post("/folders/edit", async (req, res) => {
   }
 });
 
+app.get("/file/:name", async (req, res) => {
+  const fileName = req.params.name;
+
+  const fileDetails = await prisma.file.findFirst({
+    where: {
+      name: fileName,
+    },
+  });
+
+  res.render("fileDetails", {
+    title: "File details",
+    file: fileDetails,
+    user: req.user,
+  });
+});
+
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send(`Something broke! ${err}`);
