@@ -243,6 +243,8 @@ app.post("/upload", upload.single("file_upload"), async (req, res) => {
     file_type: req.file.mimetype,
     userId: req.user.id,
     folderId: folderId,
+    size: req.file.size,
+    path: req.file.path,
   };
 
   await prisma.file.create({
