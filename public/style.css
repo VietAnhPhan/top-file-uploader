@@ -219,7 +219,7 @@ footer {
 }
 
 .resource__uploaded_at {
-    flex: 1;
+    flex: 2;
 }
 
 .folder__wrapper {
@@ -234,4 +234,12 @@ footer {
 
 .resources {
     margin-top: 2rem;
+}
+
+.resource__file_size {
+    flex: 1;
+}
+
+.resource__download_btn {
+    flex: 1
 }

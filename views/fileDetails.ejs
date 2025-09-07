@@ -16,13 +16,13 @@
         <header>
             <ul>
                 <div class="header__brand">
-                    <h1>Welcome to cloud storage!</h1>
+                    <h1><a href="/">Welcome to cloud storage!</a></h1>
                 </div>
                 <div class="header__account">
                     <ul>
                         <% if(locals.user) { %>
-                            <li><a href="/users/<%=user.user_name%>">Hello, <%=user.user_name%> (Membership:
-                                        <%=user.membership_status %>)</a></li>
+                            <li>Hello, <%=user.user_name%>
+                                    <%=user.membership_status %></a></li>
                             <li><a href="/log-out">Log out</a></li>
                             <% } else {%>
                                 <li><a href="/log-in">Log in</a></li>
@@ -64,6 +64,10 @@
                         </p>
                         <p class="resource__file_size">
                             Size: <%=file.size %> byte
+                        </p>
+                        <p class="resource__download_btn">
+                            <% const filePath=file.path.replace("public","static") %>
+                                <a href="/<%=filePath%>" download>Download file</a>
                         </p>
                     </div>
 
