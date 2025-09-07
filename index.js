@@ -18,6 +18,7 @@ const bcrypt = require("bcryptjs");
 const multer = require("multer");
 const upload = multer({ dest: "public/uploads/" });
 const fs = require("node:fs");
+const { error } = require("node:console");
 
 const prisma = new PrismaClient();
 
@@ -100,16 +101,27 @@ app.use("/static", express.static(path.join(__dirname, "public")));
 
 app.get("/", async (req, res) => {
   const folders = await prisma.folder.findMany({
-    select: {
-      id: true,
-      name: true,
-      created_at: true,
+    include: {
+      file: true,
     },
     where: {
       userId: req.user.id,
     },
   });
-  res.render("index", { title: "Home page", user: req.user, folders: folders });
+
+  const files = await prisma.file.findMany({
+    where: {
+      userId: req.user.id,
+      folderId: null,
+    },
+  });
+
+  res.render("index", {
+    title: "Home page",
+    user: req.user,
+    folders: folders,
+    files: files,
+  });
 });
 
 app.get("/sign-up", (req, res) => {
@@ -208,7 +220,24 @@ app.get("/log-in", (req, res) => {
   });
 });
 
-app.post("/upload", upload.single("file"), (req, res) => {
+app.post("/upload", upload.single("file"), async (req, res) => {
+  const folderId = parseInt(req.body.folder_id);
+
+  if (!req.file) {
+    throw new Error("File is not attacthed");
+  }
+
+  const file = {
+    name: req.file.filename,
+    file_type: req.file.mimetype,
+    userId: req.user.id,
+    folderId: folderId,
+  };
+
+  await prisma.file.create({
+    data: file,
+  });
+
   res.redirect("/");
 });
 

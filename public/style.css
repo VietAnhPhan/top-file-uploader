@@ -61,7 +61,7 @@ body {
 
 form {
     display: flex;
-    flex-direction: column;
+    /* flex-direction: column; */
     gap: 0.5rem;
     /* width: 100%; */
 
@@ -188,9 +188,11 @@ footer {
 
 .folder {
     display: flex;
+    flex-direction: column;
 }
 
-.folder__actions {
+.folder__actions,
+.file__actions {
     display: flex;
 }
 
@@ -198,6 +200,15 @@ footer {
     display: flex;
 }
 
-.folder__description {
+.folder__description,
+.file__description {
     flex: 1
+}
+
+.folder__wrapper {
+    display: flex;
+}
+
+.file {
+    display: flex;
 }
