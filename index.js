@@ -319,6 +319,11 @@ app.post("/folders/edit", async (req, res) => {
   }
 });
 
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send(`Something broke! ${err}`);
+});
+
 app.listen(process.env.PORT, () => {
   console.log(`Listen on port: ${process.env.PORT}`);
 });
