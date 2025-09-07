@@ -16,9 +16,8 @@ const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcryptjs");
 
 const multer = require("multer");
-const upload = multer({ dest: "public/uploads/" });
+// const upload = multer({ dest: "public/uploads/" });
 const fs = require("node:fs");
-const { error } = require("node:console");
 
 const prisma = new PrismaClient();
 
@@ -98,6 +97,18 @@ app.use(
 app.use(passport.session());
 app.use(express.urlencoded({ extended: false }));
 app.use("/static", express.static(path.join(__dirname, "public")));
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "public/uploads/");
+  },
+  filename: function (req, file, cb) {
+    // const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, file.originalname);
+  },
+});
+
+const upload = multer({ storage: storage });
 
 app.get("/", async (req, res) => {
   const folders = await prisma.folder.findMany({
@@ -220,7 +231,7 @@ app.get("/log-in", (req, res) => {
   });
 });
 
-app.post("/upload", upload.single("file"), async (req, res) => {
+app.post("/upload", upload.single("file_upload"), async (req, res) => {
   const folderId = parseInt(req.body.folder_id);
 
   if (!req.file) {
@@ -228,7 +239,7 @@ app.post("/upload", upload.single("file"), async (req, res) => {
   }
 
   const file = {
-    name: req.file.filename,
+    name: req.file.originalname,
     file_type: req.file.mimetype,
     userId: req.user.id,
     folderId: folderId,

@@ -189,11 +189,18 @@ footer {
 .folder {
     display: flex;
     flex-direction: column;
+
+}
+
+.folders,
+.files {
+    padding: 0;
 }
 
 .folder__actions,
 .file__actions {
     display: flex;
+    gap: 1rem;
 }
 
 .main_actions {
@@ -202,13 +209,29 @@ footer {
 
 .folder__description,
 .file__description {
+    flex: 1;
+    display: flex;
+
+}
+
+.resource__title {
     flex: 1
+}
+
+.resource__uploaded_at {
+    flex: 1;
 }
 
 .folder__wrapper {
     display: flex;
+    align-items: center;
 }
 
 .file {
     display: flex;
+    align-items: center;
+}
+
+.resources {
+    margin-top: 2rem;
 }

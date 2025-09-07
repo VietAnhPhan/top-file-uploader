@@ -36,7 +36,7 @@
         <main class="container">
             <div class="main_actions">
                 <form action="/upload" method="post" enctype="multipart/form-data">
-                    <input type="file" name="file" />
+                    <input type="file" name="file_upload" />
                     <button type="submit">Upload files</button>
                 </form>
 
@@ -50,95 +50,108 @@
                     <button class="btn__new_folder">New folder</button>
                 </div>
             </div>
-            <% if(locals.folders) {%>
-                <ul class="folders">
-                    <% locals.folders.forEach(folder=> { %>
-                        <li class="folder">
-                            <div class="folder__wrapper">
-                                <div class="folder__description">
-                                    <%=folder.name %>
-                                        <%=folder.created_at %>
-
-                                </div>
-                                <div class="folder__actions">
+            <div class="resources">
 
 
-                                    <form action="/folders/delete" method="post">
-                                        <input type="hidden" name="folder_id" value="<%=folder.id%>">
-                                        <input type="hidden" name="folder_name" value="<%=folder.name%>">
-                                        <button type="submit">Delete</button>
-                                    </form>
-                                    <dialog class="dialog__edit_folder">
+                <% if(locals.folders) {%>
+                    <ul class="folders">
+                        <% locals.folders.forEach(folder=> { %>
+                            <li class="folder">
+                                <div class="folder__wrapper">
+                                    <div class="folder__description">
+                                        <p class="resource__title">
+                                            <%=folder.name %>
+                                        </p>
+                                        <p class="resource__uploaded_at">
+                                            <%=folder.created_at %>
+                                        </p>
 
-                                        <form action="/folders/edit" method="post">
-                                            <input type="hidden" name="folder_id" value="<%=folder.id%>">
-                                            <input type="hidden" name="folder_old_name" value="<%=folder.name%>">
-                                            <input type="text" name="folder_new_name" placeholder="<%=folder.name%>">
-                                            <button type="submit">Save folder</button>
-                                        </form>
-
-                                    </dialog>
-                                    <button class="btn__edit_folder">Edit</button>
-                                    <dialog class="dialog__upload_files">
-                                        <form action="/upload" method="post" enctype="multipart/form-data">
-                                            <input type="hidden" name="folder_id" value="<%=folder.id%>">
-                                            <input type="file" name="file" />
-                                            <button type="submit">Upload files</button>
-                                        </form>
-                                    </dialog>
-                                    <button class="btn__upload_files">Upload files</button>
-
-                                </div>
-                            </div>
-                            <ul class="files">
-
-
-                                <% folder.file.forEach(file=>{ %>
-                                    <li>
-                                        <%=file.name %>
-                                    </li>
-                                    <% }) %>
-                            </ul>
-                        </li>
-                        <% }); %>
-                </ul>
-                <% } %>
-
-
-                    <% if(locals.files) {%>
-                        <ul class="files">
-                            <% locals.files.forEach(file=> { %>
-                                <li class="file">
-                                    <div class="file__description">
-                                        <%=file.name %>
-                                            <%=file.created_at %>
                                     </div>
-                                    <div class="file__actions">
+                                    <div class="folder__actions">
 
 
-                                        <form action="/files/delete" method="post">
-                                            <input type="hidden" name="file_id" value="<%=file.id%>">
-                                            <input type="hidden" name="file_name" value="<%=file.name%>">
+                                        <form action="/folders/delete" method="post">
+                                            <input type="hidden" name="folder_id" value="<%=folder.id%>">
+                                            <input type="hidden" name="folder_name" value="<%=folder.name%>">
                                             <button type="submit">Delete</button>
                                         </form>
-                                        <dialog class="dialog__edit_file">
+                                        <dialog class="dialog__edit_folder">
 
-                                            <form action="/files/edit" method="post">
-                                                <input type="hidden" name="file_id" value="<%=file.id%>">
-                                                <input type="hidden" name="file_old_name" value="<%=file.name%>">
-                                                <input type="text" name="file_new_name" placeholder="<%=file.name%>">
-                                                <button type="submit">Save file</button>
+                                            <form action="/folders/edit" method="post">
+                                                <input type="hidden" name="folder_id" value="<%=folder.id%>">
+                                                <input type="hidden" name="folder_old_name" value="<%=folder.name%>">
+                                                <input type="text" name="folder_new_name"
+                                                    placeholder="<%=folder.name%>">
+                                                <button type="submit">Save folder</button>
                                             </form>
 
                                         </dialog>
-                                        <button class="btn__edit_file">Edit</button>
+                                        <button class="btn__edit_folder">Edit</button>
+                                        <dialog class="dialog__upload_files">
+                                            <form action="/upload" method="post" enctype="multipart/form-data">
+                                                <input type="hidden" name="folder_id" value="<%=folder.id%>">
+                                                <input type="file" name="file" />
+                                                <button type="submit">Upload files</button>
+                                            </form>
+                                        </dialog>
+                                        <button class="btn__upload_files">Upload files</button>
+
                                     </div>
-                                </li>
-                                <% }); %>
-                        </ul>
-                        <% } %>
+                                </div>
+                                <ul class="files__in_folder">
 
 
+                                    <% folder.file.forEach(file=>{ %>
+                                        <li>
+                                            <%=file.name %>
+                                        </li>
+                                        <% }) %>
+                                </ul>
+                            </li>
+                            <% }); %>
+                    </ul>
+                    <% } %>
+
+
+                        <% if(locals.files) {%>
+                            <ul class="files">
+                                <% locals.files.forEach(file=> { %>
+                                    <li class="file">
+                                        <div class="file__description">
+                                            <p class="resource__title">
+                                                <%=file.name %>
+                                            </p>
+                                            <p class="resource__uploaded_at">
+                                                <%=file.created_at %>
+                                            </p>
+                                        </div>
+                                        <div class="file__actions">
+
+
+                                            <form action="/files/delete" method="post">
+                                                <input type="hidden" name="file_id" value="<%=file.id%>">
+                                                <input type="hidden" name="file_name" value="<%=file.name%>">
+                                                <button type="submit">Delete</button>
+                                            </form>
+                                            <dialog class="dialog__edit_file">
+
+                                                <form action="/files/edit" method="post">
+                                                    <input type="hidden" name="file_id" value="<%=file.id%>">
+                                                    <input type="hidden" name="file_old_name" value="<%=file.name%>">
+                                                    <input type="text" name="file_new_name"
+                                                        placeholder="<%=file.name%>">
+                                                    <button type="submit">Save file</button>
+                                                </form>
+
+                                            </dialog>
+                                            <button class="btn__edit_file">Edit</button>
+                                        </div>
+                                    </li>
+                                    <% }); %>
+                            </ul>
+                            <% } %>
+
+            </div>
         </main>
         <%} else{%>
 
