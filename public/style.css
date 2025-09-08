@@ -243,3 +243,14 @@ footer {
 .resource__download_btn {
     flex: 1
 }
+
+.form__edit {
+    display: flex;
+    flex-direction: column;
+}
+
+.form__buttons {
+    display: flex;
+    justify-content: right;
+    gap: 1rem;
+}

@@ -76,13 +76,18 @@
                                             <button type="submit">Delete</button>
                                         </form>
                                         <dialog class="dialog__edit_folder">
+                                            <p>Edit folder</p>
 
-                                            <form action="/folders/edit" method="post">
+                                            <form action="/folders/edit" method="post" class="form__edit">
                                                 <input type="hidden" name="folder_id" value="<%=folder.id%>">
                                                 <input type="hidden" name="folder_old_name" value="<%=folder.name%>">
+
                                                 <input type="text" name="folder_new_name"
                                                     placeholder="<%=folder.name%>">
-                                                <button type="submit">Save folder</button>
+                                                <div class="form__buttons">
+                                                    <button type="button" class="btn__close_dialog">Cancel</button>
+                                                    <button type="submit">Save folder</button>
+                                                </div>
                                             </form>
 
                                         </dialog>

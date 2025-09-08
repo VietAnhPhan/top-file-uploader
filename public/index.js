@@ -1,20 +1,20 @@
 const dialogCreateFolder = document.querySelector(".dialog__create_folder");
 const showButtonCreateFolder = document.querySelector(".btn__new_folder");
 
-const dialogEditFolder = document.querySelector(".dialog__edit_folder");
-const showButtonEditFolder = document.querySelector(".btn__edit_folder");
+// const dialogEditFolder = document.querySelectorAll(".dialog__edit_folder");
+const showButtonEditFolder = document.querySelectorAll(".btn__edit_folder");
 
 const showButtonUploadFiles = document.querySelectorAll(".btn__upload_files");
-// const closeButton = document
-//   .querySelectorAll(".dialog__create_folder")[0]
-//   .querySelector("button");
+const closeButton = document.querySelectorAll(".btn__close_dialog");
 
 showButtonCreateFolder.addEventListener("click", () => {
   dialogCreateFolder.showModal();
 });
 
-showButtonEditFolder.addEventListener("click", () => {
-  dialogEditFolder.showModal();
+showButtonEditFolder.forEach((btn) => {
+  btn.addEventListener("click", (e) => {
+    e.target.parentNode.querySelector(".dialog__edit_folder").showModal();
+  });
 });
 
 showButtonUploadFiles.forEach((btn) => {
@@ -23,6 +23,8 @@ showButtonUploadFiles.forEach((btn) => {
   });
 });
 
-// closeButton.addEventListener("click", () => {
-//   dialogCreateFolder.close();
-// });
+closeButton.forEach((btn) => {
+  btn.addEventListener("click", (e) => {
+    e.target.parentNode.parentNode.parentNode.close();
+  });
+});

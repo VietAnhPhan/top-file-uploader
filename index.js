@@ -274,7 +274,7 @@ app.post("/folders/create", async (req, res) => {
   }
 });
 
-app.post("/folders/delete", async (req, res) => {
+app.post("/folders/delete", async (req, res, next) => {
   const folderId = parseInt(req.body.folder_id);
   const folderName = req.body.folder_name;
   const folderPath = path.join(__dirname, `public/uploads/${folderName}`);
@@ -283,7 +283,7 @@ app.post("/folders/delete", async (req, res) => {
     if (fs.existsSync(folderPath)) {
       fs.rmdir(folderPath, (err) => {
         if (err) {
-          throw err;
+          next(err);
         }
       });
     }
