@@ -1,5 +1,6 @@
 const dialogCreateFolder = document.querySelector(".dialog__create_folder");
 const showButtonCreateFolder = document.querySelector(".btn__new_folder");
+const closeNewFolderBtn = document.querySelector(".btn__close_new_folder");
 
 // const dialogEditFolder = document.querySelectorAll(".dialog__edit_folder");
 const showButtonEditFolder = document.querySelectorAll(".btn__edit_folder");
@@ -9,6 +10,10 @@ const closeButton = document.querySelectorAll(".btn__close_dialog");
 
 showButtonCreateFolder.addEventListener("click", () => {
   dialogCreateFolder.showModal();
+});
+
+closeNewFolderBtn.addEventListener("click", () => {
+  dialogCreateFolder.close();
 });
 
 showButtonEditFolder.forEach((btn) => {
