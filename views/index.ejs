@@ -22,7 +22,7 @@
                     <ul>
                         <% if(locals.user) { %>
                             <li>Hello, <%=user.user_name%>
-                                        <%=user.membership_status %></a></li>
+                            </li>
                             <li><a href="/log-out">Log out</a></li>
                             <% } else {%>
                                 <li><a href="/log-in">Log in</a></li>
@@ -90,7 +90,7 @@
                                         <dialog class="dialog__upload_files">
                                             <form action="/upload" method="post" enctype="multipart/form-data">
                                                 <input type="hidden" name="folder_id" value="<%=folder.id%>">
-                                                <input type="file" name="file" />
+                                                <input type="file" name="file_upload" />
                                                 <button type="submit">Upload files</button>
                                             </form>
                                         </dialog>
