@@ -99,8 +99,23 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/static", express.static(path.join(__dirname, "public")));
 
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "public/uploads/");
+  destination: async function (req, file, cb) {
+    if (req.body.folder_id) {
+      const folderRelativePath = await prisma.folder.findFirst({
+        select: {
+          path: true,
+        },
+        where: {
+          id: parseInt(req.body.folder_id),
+        },
+      });
+
+      if (!folderRelativePath.path) {
+        throw new Error("folder path is not existing in database");
+      }
+
+      cb(null, folderRelativePath.path);
+    } else cb(null, "public/uploads/");
   },
   filename: function (req, file, cb) {
     // const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
@@ -257,6 +272,7 @@ app.post("/upload", upload.single("file_upload"), async (req, res) => {
 app.post("/folders/create", async (req, res) => {
   const folderName = req.body.folder_name;
   const folderPath = path.join(__dirname, `public/uploads/${folderName}`);
+  const folderRelativePath = `public/uploads/${folderName}`;
 
   try {
     if (!fs.existsSync(folderPath)) {
@@ -265,6 +281,7 @@ app.post("/folders/create", async (req, res) => {
         data: {
           name: folderName,
           userId: req.user.id,
+          path: folderRelativePath,
         },
       });
     }
