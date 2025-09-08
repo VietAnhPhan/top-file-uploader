@@ -1,0 +1,31 @@
+<li class="file">
+    <div class="file__description">
+        <p class="resource__title">
+            <%=file.name %>
+        </p>
+        <p class="resource__uploaded_at">
+            <%=file.created_at %>
+        </p>
+    </div>
+    <div class="file__actions">
+
+        <a href="/file/<%=file.name%>" class="btn__view_details">View details</a>
+        <!-- <form action="/files/delete" method="post">
+                                                <input type="hidden" name="file_id" value="<%=file.id%>">
+                                                <input type="hidden" name="file_name" value="<%=file.name%>">
+                                                <button type="submit">Delete</button>
+                                            </form> -->
+        <!-- <dialog class="dialog__edit_file">
+
+                                                <form action="/files/edit" method="post">
+                                                    <input type="hidden" name="file_id" value="<%=file.id%>">
+                                                    <input type="hidden" name="file_old_name" value="<%=file.name%>">
+                                                    <input type="text" name="file_new_name"
+                                                        placeholder="<%=file.name%>">
+                                                    <button type="submit">Save file</button>
+                                                </form>
+
+                                            </dialog> -->
+        <!-- <button class="btn__edit_file">Edit</button> -->
+    </div>
+</li>
