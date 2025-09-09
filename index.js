@@ -261,7 +261,7 @@ const supabase = createClient(
 async function uploadFile(file) {
   const { data, error } = await supabase.storage
     .from(process.env.SUPABASE_BUCKET_NAME)
-    .upload(`users/${file.originalname}`, file, {
+    .upload(`users/${file.originalname}`, file.buffer, {
       contentType: file.mimetype,
     });
 
@@ -276,7 +276,23 @@ app.post("/upload", upload.single("file_upload"), async (req, res) => {
     throw new Error("File is not attacthed");
   }
 
-  await uploadFile(req.file);
+  // await uploadFile(req.file);
+
+  const { data, error } = await supabase.storage
+    .from(process.env.SUPABASE_BUCKET_NAME)
+    .createSignedUploadUrl(`users/${req.file.originalname}`);
+
+  if (data) {
+    console.log(data.signedUrl);
+  }
+
+  if (error) {
+    throw new Error(error);
+  }
+
+  // const fileServerPath = await supabase.storage
+  //   .from(process.env.SUPABASE_BUCKET_NAME)
+  //   .createSignedUrl(`users/${req.file.originalname}`);
 
   const folderId = parseInt(req.body.folder_id);
 
@@ -286,7 +302,7 @@ app.post("/upload", upload.single("file_upload"), async (req, res) => {
     userId: req.user.id,
     folderId: folderId,
     size: req.file.size,
-    path: req.file.path,
+    path: data.signedUrl,
   };
 
   await prisma.file.create({
