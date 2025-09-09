@@ -18,6 +18,7 @@ const bcrypt = require("bcryptjs");
 const multer = require("multer");
 // const upload = multer({ dest: "public/uploads/" });
 const fs = require("node:fs");
+const { createClient } = require("@supabase/supabase-js");
 
 const prisma = new PrismaClient();
 
@@ -98,30 +99,33 @@ app.use(passport.session());
 app.use(express.urlencoded({ extended: false }));
 app.use("/static", express.static(path.join(__dirname, "public")));
 
-const storage = multer.diskStorage({
-  destination: async function (req, file, cb) {
-    if (req.body.folder_id) {
-      const folderRelativePath = await prisma.folder.findFirst({
-        select: {
-          path: true,
-        },
-        where: {
-          id: parseInt(req.body.folder_id),
-        },
-      });
+// const storage = multer.diskStorage({
 
-      if (!folderRelativePath.path) {
-        throw new Error("folder path is not existing in database");
-      }
+//   destination: async function (req, file, cb) {
+//     if (req.body.folder_id) {
+//       const folderRelativePath = await prisma.folder.findFirst({
+//         select: {
+//           path: true,
+//         },
+//         where: {
+//           id: parseInt(req.body.folder_id),
+//         },
+//       });
 
-      cb(null, folderRelativePath.path);
-    } else cb(null, "public/uploads/");
-  },
-  filename: function (req, file, cb) {
-    // const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, file.originalname);
-  },
-});
+//       if (!folderRelativePath.path) {
+//         throw new Error("folder path is not existing in database");
+//       }
+
+//       cb(null, folderRelativePath.path);
+//     } else cb(null, "public/uploads/");
+//   },
+//   filename: function (req, file, cb) {
+//     // const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+//     cb(null, file.originalname);
+//   },
+// });
+
+const storage = multer.memoryStorage();
 
 const upload = multer({ storage: storage });
 
@@ -142,6 +146,7 @@ app.get("/", async (req, res) => {
     },
   });
 
+  res.setHeader("Content-Type", "text/html");
   res.render("index", {
     title: "Home page",
     user: req.user,
@@ -246,12 +251,34 @@ app.get("/log-in", (req, res) => {
   });
 });
 
-app.post("/upload", upload.single("file_upload"), async (req, res) => {
-  const folderId = parseInt(req.body.folder_id);
+// Create Supabase client
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_API
+);
 
+// Upload file using standard upload
+async function uploadFile(file) {
+  const { data, error } = await supabase.storage
+    .from(process.env.SUPABASE_BUCKET_NAME)
+    .upload(`users/${file.originalname}`, file, {
+      contentType: file.mimetype,
+    });
+
+  if (error) {
+    // Handle error
+    throw new Error(`Failed to upload file to cloud: ${error}`);
+  }
+}
+
+app.post("/upload", upload.single("file_upload"), async (req, res) => {
   if (!req.file) {
     throw new Error("File is not attacthed");
   }
+
+  await uploadFile(req.file);
+
+  const folderId = parseInt(req.body.folder_id);
 
   const file = {
     name: req.file.originalname,
