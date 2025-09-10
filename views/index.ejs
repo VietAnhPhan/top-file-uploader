@@ -23,7 +23,12 @@
                         <% if(locals.user) { %>
                             <li>Hello, <%=user.user_name%>
                             </li>
-                            <li><a href="/log-out">Log out</a></li>
+                            <li>
+                                <form action="/log-out" method="post">
+                                    <button type="submit">Log out</button>
+                            </li>
+                            </form>
+
                             <% } else {%>
                                 <li><a href="/log-in">Log in</a></li>
                                 <li><a href="/sign-up">Sign up</a></li>

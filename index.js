@@ -130,21 +130,26 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 app.get("/", async (req, res) => {
-  const folders = await prisma.folder.findMany({
-    include: {
-      file: true,
-    },
-    where: {
-      userId: req.user.id,
-    },
-  });
+  let folders = [];
+  let files = [];
 
-  const files = await prisma.file.findMany({
-    where: {
-      userId: req.user.id,
-      folderId: null,
-    },
-  });
+  if (req.isAuthenticated()) {
+    folders = await prisma.folder.findMany({
+      include: {
+        file: true,
+      },
+      where: {
+        userId: req.user.id,
+      },
+    });
+
+    files = await prisma.file.findMany({
+      where: {
+        userId: req.user.id,
+        folderId: null,
+      },
+    });
+  }
 
   res.setHeader("Content-Type", "text/html");
   res.render("index", {
@@ -248,6 +253,15 @@ app.post(
 app.get("/log-in", (req, res) => {
   res.render("index", {
     title: "Login here",
+  });
+});
+
+app.post("/log-out", (req, res, next) => {
+  req.logout((err) => {
+    if (err) {
+      return next(err);
+    }
+    res.redirect("/");
   });
 });
 
