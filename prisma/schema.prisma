@@ -30,6 +30,7 @@ model User {
   role       String   @default("")
   folder     Folder[]
   File       File[]
+  email      String   @default("")
 }
 
 model Folder {
