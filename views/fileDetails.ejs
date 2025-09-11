@@ -65,9 +65,10 @@
                         <p class="resource__file_size">
                             Size: <%=file.size %> byte
                         </p>
-                        <p class="resource__download_btn">
-                            <% const filePath=file.path.replace("public","static") %>
-                                <a href="/<%=filePath%>" download>Download file</a>
+
+                        <form action="/files/download/<%=file.id%>" method="get">
+                            <button class="resource__download_btn" type="submit">Download file</button>
+                        </form>
                         </p>
                     </div>
 

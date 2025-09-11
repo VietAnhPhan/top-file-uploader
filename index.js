@@ -479,6 +479,36 @@ app.get("/file/:name", async (req, res) => {
   });
 });
 
+app.get("/files/download/:fileId", async (req, res, next) => {
+  const id = Number(req.params.fileId);
+  const file = await prisma.file.findFirst({
+    where: {
+      id: id,
+    },
+    include: {
+      folder: {
+        select: {
+          name: true,
+        },
+      },
+    },
+  });
+
+  const { data, error } = await supabase.storage
+    .from(file.folder.name)
+    .download(file.path);
+
+  if (error) {
+    next(error);
+  }
+  let buffer = await data.arrayBuffer();
+  buffer = Buffer.from(buffer);
+  res.set("Content-Disposition", `attachment; filename="${file.name}"`);
+  res.send(buffer);
+
+  // res.redirect("/");
+});
+
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send(`Something broke! ${err}`);
