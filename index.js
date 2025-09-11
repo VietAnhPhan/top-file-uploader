@@ -248,6 +248,34 @@ app.post(
     successRedirect: "/",
     failureRedirect: "/log-in",
   })
+  // passport.authenticate("local", async function (err, user, info, status) {
+  //   if (err) {
+  //     return next(err);
+  //   }
+  //   if (!user) {
+  //     return res.redirect("/log-in");
+  //   }
+
+  //   // const { data, error } = await supabase.auth.signInWithPassword({
+  //   //   email: "adamphan@gmail.com",
+  //   //   password: "123",
+  //   // });
+
+  //   // if (error) {
+  //   //   next(error);
+  //   // }
+
+  //   res.redirect("/");
+  // })(req, res, next);
+
+  // const { data, error } = await supabase.auth.signInWithPassword({
+  //   email: "adamphan@gmail.com",
+  //   password: "123",
+  // });
+
+  // if (error) {
+  //   next(error);
+  // }
 );
 
 app.get("/log-in", (req, res) => {
@@ -326,26 +354,41 @@ app.post("/upload", upload.single("file_upload"), async (req, res) => {
   res.redirect("/");
 });
 
-app.post("/folders/create", async (req, res) => {
+app.post("/folders/create", async (req, res, next) => {
   const folderName = req.body.folder_name;
   const folderPath = path.join(__dirname, `public/uploads/${folderName}`);
   const folderRelativePath = `public/uploads/${folderName}`;
 
-  try {
-    if (!fs.existsSync(folderPath)) {
-      fs.mkdirSync(folderPath);
-      await prisma.folder.create({
-        data: {
-          name: folderName,
-          userId: req.user.id,
-          path: folderRelativePath,
-        },
-      });
-    }
-    res.redirect("/");
-  } catch (err) {
-    console.error(err);
+  const { data, error } = await supabase.storage.createBucket(folderName);
+
+  if (error) {
+    next(error);
   }
+
+  await prisma.folder.create({
+    data: {
+      name: folderName,
+      userId: req.user.id,
+    },
+  });
+
+  res.redirect("/");
+
+  // try {
+  //   if (!fs.existsSync(folderPath)) {
+  //     fs.mkdirSync(folderPath);
+  //     await prisma.folder.create({
+  //       data: {
+  //         name: folderName,
+  //         userId: req.user.id,
+  //         path: folderRelativePath,
+  //       },
+  //     });
+  //   }
+  //   res.redirect("/");
+  // } catch (err) {
+  //   console.error(err);
+  // }
 });
 
 app.post("/folders/delete", async (req, res, next) => {
