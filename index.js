@@ -317,26 +317,36 @@ app.post("/upload", upload.single("file_upload"), async (req, res) => {
   if (!req.file) {
     throw new Error("File is not attacthed");
   }
+  const folderId = parseInt(req.body.folder_id);
 
   // await uploadFile(req.file);
+  let folderPath = "file_uploader";
+
+  if (folderId) {
+    const folderName = await prisma.folder.findFirst({
+      select: {
+        name: true,
+      },
+      where: {
+        id: folderId,
+      },
+    });
+    folderPath = folderName.name;
+  }
 
   const { data, error } = await supabase.storage
-    .from(process.env.SUPABASE_BUCKET_NAME)
-    .createSignedUploadUrl(`users/${req.file.originalname}`);
+    .from(folderPath)
+    .upload(`folder/${req.file.originalname}`, req.file.buffer, {
+      contentType: req.file.mimetype,
+    });
 
   if (data) {
-    console.log(data.signedUrl);
+    console.log(data.path);
   }
 
   if (error) {
     throw new Error(error);
   }
-
-  // const fileServerPath = await supabase.storage
-  //   .from(process.env.SUPABASE_BUCKET_NAME)
-  //   .createSignedUrl(`users/${req.file.originalname}`);
-
-  const folderId = parseInt(req.body.folder_id);
 
   const file = {
     name: req.file.originalname,
@@ -344,12 +354,16 @@ app.post("/upload", upload.single("file_upload"), async (req, res) => {
     userId: req.user.id,
     folderId: folderId,
     size: req.file.size,
-    path: data.signedUrl,
+    path: data.path,
   };
 
   await prisma.file.create({
     data: file,
   });
+
+  // const fileServerPath = await supabase.storage
+  //   .from(process.env.SUPABASE_BUCKET_NAME)
+  //   .createSignedUrl(`users/${req.file.originalname}`);
 
   res.redirect("/");
 });
