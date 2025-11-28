@@ -76,6 +76,8 @@ form {
     height: 100%;
     padding: 2rem;
     border-radius: 10px;
+    flex: 1;
+    flex-direction: column;
 }
 
 header {
@@ -172,7 +174,7 @@ footer {
     color: blue;
 }
 
-.form__submit_login {
+.form__submit_login, .form__submit_signup {
     flex: 1;
     height: fit-content;
     display: flex;

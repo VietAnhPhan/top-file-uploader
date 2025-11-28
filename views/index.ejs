@@ -8,6 +8,7 @@
         <%=title %>
     </title>
     <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
 </head>
 
 <body>
@@ -142,8 +143,8 @@
                         <h1>Save your personal files here...</h1>
                         <h3>Hundred thoundsand people use...</h3>
                     </div>
-                    <div class="form__submit form__submit_login">
-                        <form action="/log-in" method="post">
+                    <div class="form__submit">
+                        <form action="/log-in" method="post" class="form__submit_login">
                             <label for="user_name">User name: </label>
                             <input type="text" id="user_name" name="user_name" required>
                             <label for="password">Password name: </label>
